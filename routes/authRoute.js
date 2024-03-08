@@ -8,7 +8,7 @@ router
     .post("/register", registerUser)
     .post("/login", LogInUser)
     .post("/logout", logOut)
-    .post("/forgonPassword", forgotPassword)
+    .post("/forgotPassword", forgotPassword)
     .post("/changePassword", verifyoTPAndChangePassword)
 
 

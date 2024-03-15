@@ -20,7 +20,7 @@ app.use(express.static("post"))
 app.use(express.json())
 app.use(cors(
     {
-        origin: "https://banaonodejssubmission.onrender.com",
+        origin: "http://localhost:5173",
         credentials: true
     }
 ))

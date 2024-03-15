@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const { sendEmail } = require("../utils/sendEmail")
 
-
 exports.registerUser = asyncHandler(async (req, res) => {
 
     const { email, name, password } = req.body
@@ -20,9 +19,6 @@ exports.registerUser = asyncHandler(async (req, res) => {
     if (!validator.isStrongPassword(password)) {
         return res.status(400).json({ message: "PLZ enter  Strong  poassword" })
     }
-
-
-
 
     const result = await Auth.findOne({ email })
     if (result) {
@@ -66,7 +62,6 @@ exports.LogInUser = asyncHandler(async (req, res) => {
     res.status(200).json({ message: "Log In success", result: { name: result.name, email: result.email, role: result.role } })
 
 })
-
 exports.logOut = asyncHandler(async (req, res) => {
     res.clearCookie("auth")
     res.status(200).json({ message: "Log Out Success" })
@@ -74,9 +69,7 @@ exports.logOut = asyncHandler(async (req, res) => {
 
 
 // forgot password
-
 exports.forgotPassword = asyncHandler(async (req, res) => {
-
     const { email } = req.body
     if (!validator.isEmail(email)) {
         return res.status(400).json({ message: "Enter valid email" })
@@ -91,15 +84,16 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     await Auth.findByIdAndUpdate(result._id, { otp: OTP })
     const resolve = await sendEmail({ to: email, subject: "One Time Password (OTP)", text: `Your one time Password id ${OTP}` })
     if (resolve) {
-        return res.status(200).json({ message: "Check you email and Enter OTP" })
+        console.log(email);
+        return res.status(200).json({ message: "Check you email and Enter OTP", result: { id: result._id } })
     }
 
-    res.status(400).json({ message: "Unable to send email" })
+    res.status(400).json({ message: "Unable to send email", })
 })
 
 
 exports.verifyoTPAndChangePassword = asyncHandler(async (req, res) => {
-    const { otp, email, newPassword } = req.body
+    const { otp, id, newPassword } = req.body
 
     if (validator.isEmpty(otp)) {
         return res.status(400).json({ message: "Enter valid otp" })
@@ -110,11 +104,11 @@ exports.verifyoTPAndChangePassword = asyncHandler(async (req, res) => {
     if (otp.length < 6 || otp.length > 6) {
         return res.status(400).json({ message: "Enter valid otp" })
     }
-    if (!validator.isEmail(email)) {
+    if (validator.isEmpty(id)) {
         return res.status(400).json({ message: "Enter valid email" })
     }
 
-    const result = await Auth.findOne({ email })
+    const result = await Auth.findById(id)
 
     if (!result) {
         return res.status(400).json({ message: "Email not register with us" })

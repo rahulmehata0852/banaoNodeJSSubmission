@@ -28,7 +28,7 @@ exports.sendEmail = (emailOptions) => new Promise((resolve, reject) => {
 
 
     } catch (error) {
-        return reject(error.message)
+        reject(error.message)
     }
 })
 

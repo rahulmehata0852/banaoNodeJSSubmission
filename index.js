@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const path = require("path")
 const { userProtected } = require("./middleware/userProtected")
 require("dotenv").config({ path: "./.env" })
 
@@ -15,12 +16,13 @@ const app = express()
 // image access by-frontend
 
 app.use(express.static("post"))
+app.use(express.static(path.join(__dirname, "dist")))
 
 // middlewares
 app.use(express.json())
 app.use(cors(
     {
-        origin: "http://localhost:5173",
+        origin: "https://banaonodejssubmission.onrender.com",
         credentials: true
     }
 ))
@@ -34,7 +36,7 @@ app.use((err, req, res, next) => {
 })
 
 app.use("*", (req, res) => {
-    res.status(404).json({ message: "No resource found" })
+    res.sendFile(path.join(__dirname, "dist", "index.html"))
 })
 
 mongoose.connection.once("open", () => {
